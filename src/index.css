@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/*
+  Design system: estrutura da Agência ZUM (agenciazum.com.br)
+  - Manrope nos títulos, Inter no corpo
+  - Seções escuras em azul-petróleo + seções claras
+  - Eyebrows "// ASSIM", numeração em blocos, bullets ▸, botões pílula
+  Paleta: cores do ZumTalk (azul #00638A / texto #1C3B4A / apoio #668899)
+*/
+@theme {
+  --font-heading: "Manrope Variable", system-ui, sans-serif;
+  --font-body: "Inter Variable", system-ui, sans-serif;
+
+  /* Azul-petróleo escuro (derivado do #1C3B4A do ZumTalk) */
+  --color-ink-950: #071a24;
+  --color-ink-900: #0b2330;
+  --color-ink-800: #12303f;
+  --color-ink-700: #1c3b4a;
+  --color-ink-600: #2c5266;
+
+  /* Azul de marca ZumTalk */
+  --color-brand-700: #004d6b;
+  --color-brand-600: #00638a;
+  --color-brand-500: #0a7fae;
+  --color-brand-400: #35b6e8; /* uso em fundos escuros */
+  --color-brand-200: #a9dcf2;
+  --color-brand-100: #d9eef7;
+  --color-brand-50: #eef7fb;
+
+  /* Cinza-azulado de apoio (#668899) */
+  --color-mist-500: #668899;
+  --color-mist-300: #9fb6c2;
+  --color-mist-200: #c9d7de;
+  --color-mist-100: #e4ecf0;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink-700);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.02em; }
+  :focus-visible { outline: 2px solid var(--color-brand-400); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    border-radius: 999px; padding: .9rem 1.6rem; font-weight: 700; font-size: .95rem;
+    transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+    text-align: center;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary-dark { background: var(--color-brand-400); color: var(--color-ink-950);
+    box-shadow: 0 10px 28px -10px rgba(53,182,232,.7); }
+  .btn-primary-dark:hover { background: #5cc6ef; }
+  .btn-primary-light { background: var(--color-brand-600); color: #fff;
+    box-shadow: 0 10px 28px -12px rgba(0,99,138,.7); }
+  .btn-primary-light:hover { background: var(--color-brand-700); }
+  .btn-ghost-dark { background: rgba(255,255,255,.04); color: var(--color-brand-200);
+    border: 1px solid rgba(169,220,242,.35); }
+  .btn-ghost-dark:hover { background: rgba(255,255,255,.09); }
+  .btn-ghost-light { border: 1px solid var(--color-ink-700); color: var(--color-ink-700); }
+  .btn-ghost-light:hover { background: var(--color-ink-700); color: #fff; }
+}
+
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.bubble { opacity: 0; animation: rise .5s ease forwards; }
+@keyframes blink { 0%,80%,100% { opacity: .25; } 40% { opacity: 1; } }
+.dot { animation: blink 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
