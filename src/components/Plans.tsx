@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { PRICING, TRIAL_URL, WHATSAPP_NUMBER } from "../config";
+import { Highlight, useContent, whatsappUrl } from "../content/ContentContext";
 import { Check, Container, SectionTitle, WhatsIcon } from "./ui";
 
 const brl = (n: number) => `R$ ${n.toLocaleString("pt-BR")}`;
@@ -62,6 +62,8 @@ function Switch({
 }
 
 export default function Plans() {
+  const { plans, settings } = useContent();
+  const PRICING = plans.pricing;
   const [users, setUsers] = useState(1);
   const [numbers, setNumbers] = useState(1);
   const [ai, setAi] = useState(false);
@@ -74,31 +76,30 @@ export default function Plans() {
     const numbersCost = (numbers - 1) * PRICING.extraNumber;
     const flowsCost = crm ? flows * PRICING.crmFlow : 0;
     return { base, usersCost, numbersCost, flowsCost, total: base + usersCost + numbersCost + flowsCost };
-  }, [users, numbers, ai, crm, flows]);
+  }, [users, numbers, ai, crm, flows, PRICING]);
 
   const included = [
     `${users} usuário${users > 1 ? "s" : ""} humano${users > 1 ? "s" : ""}`,
     `${numbers} número${numbers > 1 ? "s" : ""} conectado${numbers > 1 ? "s" : ""}`,
     ...(ai ? ["Agente de IA avançado"] : []),
     ...(crm ? [`${flows} fluxo${flows > 1 ? "s" : ""} de CRM`] : []),
-    "Gestão de contatos", "Gestão de oportunidades", "Gestão de produtos",
-    "Gestão de tarefas", "Automação", "Notificações", "Cadência",
+    ...plans.included,
   ];
 
   const msg =
     `Olá! Quero montar meu plano do ZumTalk: ${users} usuário(s), ${numbers} número(s)` +
     `${ai ? ", com Agente de IA" : ", sem IA"}${crm ? `, ${flows} fluxo(s) de CRM` : ""}. ` +
     `Total: ${brl(calc.total)}/mês.`;
-  const waUrl = `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}&type=phone_number&app_absent=0`;
+  const waUrl = whatsappUrl(settings.whatsappNumber, msg);
 
   return (
     <section id="planos" className="bg-white py-20 sm:py-28">
       <Container>
         <SectionTitle
           center
-          eyebrow="Planos"
-          title="Monte o plano do tamanho do seu negócio."
-          lead="Pague apenas pelo que usar. Ajuste usuários, números, IA e fluxos de CRM e veja o valor na hora."
+          eyebrow={plans.eyebrow}
+          title={<Highlight text={plans.title} className="text-brand-600" />}
+          lead={plans.lead}
         />
 
         <div className="mt-14 grid grid-cols-1 gap-6 [&>*]:min-w-0 lg:grid-cols-[1.15fr_.85fr]">
@@ -191,7 +192,7 @@ export default function Plans() {
               ))}
             </ul>
 
-            <a href={TRIAL_URL} className="btn btn-primary-dark mt-8 w-full">
+            <a href={settings.trialUrl} className="btn btn-primary-dark mt-8 w-full">
               Preparar meu teste grátis de 7 dias
             </a>
             <a href={waUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-dark mt-3 w-full">

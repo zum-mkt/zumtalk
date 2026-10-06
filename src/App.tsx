@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -6,13 +7,19 @@ import HowItWorks from "./components/HowItWorks";
 import Plans from "./components/Plans";
 import Faq from "./components/Faq";
 import Footer, { FinalCta } from "./components/Footer";
-import { WHATSAPP_URL } from "./config";
 import { WhatsIcon } from "./components/ui";
+import { ContentProvider, initialContent, useContent, whatsappUrl } from "./content/ContentContext";
+import type { SiteContent } from "./content/defaults";
 
-export default function App() {
+// O painel só é baixado quando alguém abre /admin.
+const AdminApp = lazy(() => import("./admin/AdminApp"));
+
+const path = () => window.location.pathname.replace(/\/+$/, "");
+
+export function Site() {
+  const { settings } = useContent();
   // Rota simples: /planos mostra só a calculadora (URL já usada em links e anúncios).
-  // Em produção, configure o fallback de SPA para servir index.html em /planos.
-  const isPlansPage = window.location.pathname.replace(/\/+$/, "") === "/planos";
+  const isPlansPage = path() === "/planos";
 
   return (
     <>
@@ -38,7 +45,7 @@ export default function App() {
       </main>
       <Footer />
       <a
-        href={WHATSAPP_URL}
+        href={whatsappUrl(settings.whatsappNumber, settings.whatsappMessage)}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Fale conosco no WhatsApp"
@@ -47,5 +54,21 @@ export default function App() {
         <WhatsIcon className="h-7 w-7" />
       </a>
     </>
+  );
+}
+
+export default function App() {
+  if (path().startsWith("/admin")) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-ink-950" />}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
+  const content: SiteContent = initialContent();
+  return (
+    <ContentProvider value={content}>
+      <Site />
+    </ContentProvider>
   );
 }

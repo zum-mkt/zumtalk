@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LOGIN_URL, SIGNUP_URL } from "../config";
+import { useContent } from "../content/ContentContext";
 import { Container, Logo } from "./ui";
 
 const NAV = [
@@ -10,6 +10,9 @@ const NAV = [
 ];
 
 export default function Header() {
+  const { header, settings } = useContent();
+  const LOGIN_URL = settings.loginUrl;
+  const SIGNUP_URL = settings.signupUrl;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const solid = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") === "/planos";
@@ -42,10 +45,10 @@ export default function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a href={LOGIN_URL} className="px-3 text-sm font-semibold text-mist-200 hover:text-white">
-            Entrar
+            {header.loginLabel}
           </a>
           <a href={SIGNUP_URL} className="btn btn-primary-dark !py-2.5 !text-sm">
-            Teste grátis
+            {header.ctaLabel}
           </a>
         </div>
 
@@ -75,8 +78,8 @@ export default function Header() {
               </a>
             ))}
             <div className="mt-2 grid grid-cols-2 gap-3">
-              <a href={LOGIN_URL} className="btn btn-ghost-dark !py-3 !text-sm">Entrar</a>
-              <a href={SIGNUP_URL} className="btn btn-primary-dark !py-3 !text-sm">Teste grátis</a>
+              <a href={LOGIN_URL} className="btn btn-ghost-dark !py-3 !text-sm">{header.loginLabel}</a>
+              <a href={SIGNUP_URL} className="btn btn-primary-dark !py-3 !text-sm">{header.ctaLabel}</a>
             </div>
           </Container>
         </div>

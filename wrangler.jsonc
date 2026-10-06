@@ -3,8 +3,14 @@
   "name": "zumtalk-site",
   "account_id": "038360028859e142fb2dd18145ced1cf",
   "compatibility_date": "2026-10-05",
+  "main": "worker/index.ts",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // O Worker só roda nestas rotas; JS, CSS e imagens vão direto do cache do Cloudflare.
+    "run_worker_first": ["/api/*", "/", "/planos", "/planos/", "/admin", "/admin/*"]
+  },
+  // Conteúdo editado no painel /admin. A senha do painel fica no segredo ADMIN_PASSWORD.
+  "kv_namespaces": [{ "binding": "CONTENT", "id": "157539242c1a4e1abe4a1418527d4b46" }]
 }
