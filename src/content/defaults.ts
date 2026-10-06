@@ -31,6 +31,7 @@ export type SiteContent = {
     chatName: string;
     chat: { from: "client" | "bot"; text: string }[];
   };
+  trust: { show: boolean; eyebrow: string; title: string; lead: string };
   features: { eyebrow: string; title: string; lead: string; items: Item[] };
   niches: {
     eyebrow: string;
@@ -105,6 +106,12 @@ export const DEFAULT_CONTENT: SiteContent = {
       { from: "client", text: "Preciso de 2 unidades, entrega em Lençóis." },
       { from: "bot", text: "Perfeito! Enviei a proposta e avisei o vendedor da vez. Posso confirmar pelo PIX?" },
     ],
+  },
+  trust: {
+    show: true,
+    eyebrow: "Tecnologia oficial",
+    title: "Parceiro oficial da Meta, conectado pela *API oficial* do WhatsApp.",
+    lead: "Seu número funciona pela WhatsApp Business API, dentro das regras da Meta. Mais estabilidade e segurança, sem as conexões não oficiais que colocam o número em risco de bloqueio.",
   },
   features: {
     eyebrow: "Por que escolher o ZumTalk",
@@ -218,6 +225,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     title: "Perguntas que todo mundo faz.",
     items: [
       { q: "Preciso de cartão de crédito para testar?", a: "Não. O teste grátis de 7 dias não pede cartão, e a configuração leva cerca de 5 minutos." },
+      { q: "O ZumTalk usa a API oficial do WhatsApp?", a: "Sim. O ZumTalk é parceiro oficial da Meta (Meta Business Partner) e conecta seu número pela WhatsApp Business API, a integração oficial. Isso traz mais estabilidade e evita os bloqueios comuns em ferramentas que usam conexões não oficiais." },
       { q: "Funciona com o WhatsApp Business?", a: "Sim. Você conecta o seu WhatsApp Business em poucos cliques e começa a atender pelo ZumTalk." },
       { q: "O que o plano base inclui?", a: "1 usuário, 1 número conectado, gestão de contatos, oportunidades, produtos e tarefas, além de automação, notificações e cadência. O Agente de IA, usuários e números extras e os fluxos de CRM são adicionais e entram na calculadora de planos." },
       { q: "Meus dados estão seguros?", a: "Os dados são criptografados e a plataforma está em conformidade com a LGPD." },

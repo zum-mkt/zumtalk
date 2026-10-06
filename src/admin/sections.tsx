@@ -1,9 +1,9 @@
 import type { ComponentType, ReactNode } from "react";
 import {
-  BadgeDollarSign, CircleHelp, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
+  BadgeCheck, BadgeDollarSign, CircleHelp, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
 } from "lucide-react";
 import type { SiteContent } from "../content/defaults";
-import { Card, Grid, ListEditor, NumberField, TextArea, TextField, WordList } from "./fields";
+import { Card, Grid, ListEditor, NumberField, TextArea, TextField, Toggle, WordList } from "./fields";
 
 type Props<K extends keyof SiteContent> = { value: SiteContent[K]; set: (patch: Partial<SiteContent[K]>) => void };
 
@@ -95,6 +95,17 @@ function HeroForm({ value: v, set }: Props<"hero">) {
         />
       </Card>
     </>
+  );
+}
+
+function TrustForm({ value: v, set }: Props<"trust">) {
+  return (
+    <Card title="Faixa de parceria oficial" description="Aparece logo abaixo do topo, com os selos Meta Business Partner e WhatsApp Business API.">
+      <Toggle label="Mostrar no site" checked={v.show} onChange={(show) => set({ show })} />
+      <TextField label="Chamada" value={v.eyebrow} onChange={(eyebrow) => set({ eyebrow })} />
+      <TextField label="Título" value={v.title} onChange={(title) => set({ title })} hint={HIGHLIGHT_HINT} />
+      <TextArea label="Texto de apoio" value={v.lead} onChange={(lead) => set({ lead })} />
+    </Card>
   );
 }
 
@@ -351,6 +362,7 @@ function bind<K extends keyof SiteContent>(key: K, Form: ComponentType<Props<K>>
 
 export const SECTIONS: SectionDef[] = [
   { slug: "hero", label: "Topo (hero)", icon: Home, render: bind("hero", HeroForm) },
+  { slug: "parceria-meta", label: "Parceria Meta", icon: BadgeCheck, render: bind("trust", TrustForm) },
   { slug: "recursos", label: "Recursos", icon: Sparkles, render: bind("features", FeaturesForm) },
   { slug: "para-quem-e", label: "Para quem é", icon: Users, render: bind("niches", NichesForm) },
   { slug: "como-funciona", label: "Como funciona", icon: Footprints, render: bind("steps", StepsForm) },

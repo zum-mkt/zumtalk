@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import TrustBar from "./components/TrustBar";
 import Features from "./components/Features";
 import Niches from "./components/Niches";
 import HowItWorks from "./components/HowItWorks";
@@ -34,6 +35,7 @@ export function Site() {
         ) : (
           <>
             <Hero />
+            <TrustBar />
             <Features />
             <Niches />
             <HowItWorks />

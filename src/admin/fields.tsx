@@ -207,3 +207,24 @@ export function ListEditor<T>({
     </div>
   );
 }
+
+export function Toggle({ label, hint, checked, onChange }: { label: string; hint?: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="text-sm font-bold text-ink-900">{label}</p>
+        {hint ? <p className="mt-0.5 text-xs text-mist-500">{hint}</p> : null}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        className={cn("relative h-7 w-12 shrink-0 rounded-full transition-colors", checked ? "bg-brand-600" : "bg-mist-200")}
+      >
+        <span className={cn("absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform", checked && "translate-x-5")} />
+      </button>
+    </div>
+  );
+}
