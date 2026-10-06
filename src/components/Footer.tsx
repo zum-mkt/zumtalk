@@ -35,7 +35,7 @@ export default function Footer() {
       <Container>
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Logo />
+            <Logo className="h-10" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               Chatbot inteligente para WhatsApp que transforma seu atendimento e aumenta suas vendas com IA conversacional.
             </p>

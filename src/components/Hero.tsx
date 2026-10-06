@@ -13,8 +13,8 @@ function ChatMock() {
       <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-brand-400/10 blur-2xl" aria-hidden="true" />
       <div className="overflow-hidden rounded-[1.6rem] border border-white/10 bg-ink-900 shadow-2xl shadow-black/40">
         <div className="flex items-center gap-3 border-b border-white/10 bg-ink-800 px-4 py-3">
-          <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-400 font-heading text-sm font-extrabold text-ink-950">
-            Z
+          <div className="grid h-9 w-9 place-items-center rounded-full bg-white">
+            <img src="/logo-mark.svg" alt="" width={22} height={22} className="h-[22px] w-[22px]" />
           </div>
           <div className="leading-tight">
             <p className="text-sm font-semibold text-white">Atendimento ZumTalk</p>

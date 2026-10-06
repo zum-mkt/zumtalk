@@ -1,24 +1,15 @@
 import type { ReactNode } from "react";
 
-export function Logo({ dark = true, className = "" }: { dark?: boolean; className?: string }) {
-  // Wordmark provisório. Para usar o logo oficial: coloque o arquivo em /public/logo.png
-  // e troque este componente por <img src="/logo.png" alt="ZumTalk" />.
+export function Logo({ dark = true, className = "h-8" }: { dark?: boolean; className?: string }) {
+  // logo-white.svg: versão para fundos escuros · logo.svg: cores originais, para fundos claros
   return (
-    <span
-      className={`inline-flex items-center gap-2 font-heading text-xl font-extrabold tracking-tight ${className}`}
-      aria-label="ZumTalk"
-    >
-      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="9" fill={dark ? "#35b6e8" : "#00638a"} />
-        <path
-          d="M8 10h16l-9.5 9H24v3H8l9.5-9H8z"
-          fill={dark ? "#071a24" : "#ffffff"}
-        />
-      </svg>
-      <span className={dark ? "text-white" : "text-ink-700"}>
-        Zum<span className={dark ? "text-brand-400" : "text-brand-600"}>Talk</span>
-      </span>
-    </span>
+    <img
+      src={dark ? "/logo-white.svg" : "/logo.svg"}
+      alt="ZumTalk"
+      width={152}
+      height={32}
+      className={`w-auto ${className}`}
+    />
   );
 }
 
