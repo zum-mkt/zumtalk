@@ -100,12 +100,40 @@ function HeroForm({ value: v, set }: Props<"hero">) {
 
 function TrustForm({ value: v, set }: Props<"trust">) {
   return (
+    <>
     <Card title="Faixa de parceria oficial" description="Aparece logo abaixo do topo, com os selos Meta Business Partner e WhatsApp Business API.">
       <Toggle label="Mostrar no site" checked={v.show} onChange={(show) => set({ show })} />
       <TextField label="Chamada" value={v.eyebrow} onChange={(eyebrow) => set({ eyebrow })} />
       <TextField label="Título" value={v.title} onChange={(title) => set({ title })} hint={HIGHLIGHT_HINT} />
       <TextArea label="Texto de apoio" value={v.lead} onChange={(lead) => set({ lead })} />
     </Card>
+    <Card title="Formas de conexão" description="Os dois cartões com diagrama: API oficial (número dedicado) e Coexistência.">
+      <TextField label="Título" value={v.pathsTitle} onChange={(pathsTitle) => set({ pathsTitle })} />
+      <TextArea label="Texto de apoio" value={v.pathsLead} onChange={(pathsLead) => set({ pathsLead })} rows={2} />
+    </Card>
+    {v.paths.slice(0, 2).map((path, i) => {
+      const up = (patch: Partial<typeof path>) => set({ paths: v.paths.map((p, j) => (j === i ? { ...p, ...patch } : p)) });
+      return (
+        <Card key={i} title={i === 0 ? "Caminho 1 · API oficial (número dedicado)" : "Caminho 2 · Coexistência"} description="O diagrama é fixo; os textos você edita aqui.">
+          <Grid>
+            <TextField label="Etiqueta" value={path.tag} onChange={(tag) => up({ tag })} />
+            <TextField label="Título" value={path.title} onChange={(title) => up({ title })} />
+          </Grid>
+          <TextArea label="Descrição" value={path.text} onChange={(text) => up({ text })} rows={2} />
+          <ListEditor
+            label="Vantagens"
+            items={path.bullets.map((text) => ({ text }))}
+            onChange={(items) => up({ bullets: items.map((x) => x.text) })}
+            newItem={() => ({ text: "" })}
+            itemTitle={(x) => x.text}
+            addLabel="Adicionar vantagem"
+            render={(x, upB) => <TextField label="Texto" value={x.text} onChange={(text) => upB({ text })} />}
+          />
+          <TextArea label="Observação (rodapé do cartão)" value={path.note} onChange={(note) => up({ note })} rows={2} hint="Deixe em branco para esconder." />
+        </Card>
+      );
+    })}
+    </>
   );
 }
 

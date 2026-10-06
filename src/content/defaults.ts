@@ -31,7 +31,16 @@ export type SiteContent = {
     chatName: string;
     chat: { from: "client" | "bot"; text: string }[];
   };
-  trust: { show: boolean; eyebrow: string; title: string; lead: string };
+  trust: {
+    show: boolean;
+    eyebrow: string;
+    title: string;
+    lead: string;
+    pathsTitle: string;
+    pathsLead: string;
+    // Sempre dois caminhos: [0] API oficial com número dedicado, [1] Coexistência.
+    paths: { tag: string; title: string; text: string; bullets: string[]; note: string }[];
+  };
   features: { eyebrow: string; title: string; lead: string; items: Item[] };
   niches: {
     eyebrow: string;
@@ -112,6 +121,32 @@ export const DEFAULT_CONTENT: SiteContent = {
     eyebrow: "Tecnologia oficial",
     title: "Parceiro oficial da Meta, conectado pela *API oficial* do WhatsApp.",
     lead: "Seu número funciona pela WhatsApp Business API, dentro das regras da Meta. Mais estabilidade e segurança, sem as conexões não oficiais que colocam o número em risco de bloqueio.",
+    pathsTitle: "Duas formas de conectar o seu número",
+    pathsLead: "Escolha o caminho que combina com a sua operação. Os dois são oficiais da Meta.",
+    paths: [
+      {
+        tag: "API oficial",
+        title: "Número dedicado ao ZumTalk",
+        text: "O número é conectado direto na WhatsApp Business API e passa a funcionar só pelo ZumTalk, com o bot e a equipe atendendo juntos.",
+        bullets: [
+          "Ideal para equipes e alto volume de mensagens",
+          "Vários atendentes no mesmo número, sem depender de um celular",
+          "Maior capacidade de envio",
+        ],
+        note: "O número deixa de funcionar no aplicativo do WhatsApp no celular.",
+      },
+      {
+        tag: "Novo · Coexistência",
+        title: "Mesmo número no app e no ZumTalk",
+        text: "Você continua usando o WhatsApp Business no celular e conecta o mesmo número ao ZumTalk. As conversas aparecem nos dois lugares.",
+        bullets: [
+          "Conversas dos últimos 6 meses importadas",
+          "O que você responde no celular aparece no ZumTalk, e vice-versa",
+          "Sem trocar de número nem avisar os clientes",
+        ],
+        note: "Grupos não são sincronizados, e listas de transmissão e mensagens temporárias ficam desativadas. Abra o app no celular com frequência para a conexão continuar ativa.",
+      },
+    ],
   },
   features: {
     eyebrow: "Por que escolher o ZumTalk",
@@ -226,6 +261,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     items: [
       { q: "Preciso de cartão de crédito para testar?", a: "Não. O teste grátis de 7 dias não pede cartão, e a configuração leva cerca de 5 minutos." },
       { q: "O ZumTalk usa a API oficial do WhatsApp?", a: "Sim. O ZumTalk é parceiro oficial da Meta (Meta Business Partner) e conecta seu número pela WhatsApp Business API, a integração oficial. Isso traz mais estabilidade e evita os bloqueios comuns em ferramentas que usam conexões não oficiais." },
+      { q: "Posso continuar usando o WhatsApp no celular?", a: "Sim, com a Coexistência. Você conecta ao ZumTalk o mesmo número que já usa no app WhatsApp Business, e as conversas ficam sincronizadas nos dois lugares, inclusive o histórico dos últimos 6 meses. Se preferir um número só para o ZumTalk, com mais capacidade de envio e vários atendentes, usamos a API oficial com número dedicado." },
       { q: "Funciona com o WhatsApp Business?", a: "Sim. Você conecta o seu WhatsApp Business em poucos cliques e começa a atender pelo ZumTalk." },
       { q: "O que o plano base inclui?", a: "1 usuário, 1 número conectado, gestão de contatos, oportunidades, produtos e tarefas, além de automação, notificações e cadência. O Agente de IA, usuários e números extras e os fluxos de CRM são adicionais e entram na calculadora de planos." },
       { q: "Meus dados estão seguros?", a: "Os dados são criptografados e a plataforma está em conformidade com a LGPD." },

@@ -86,3 +86,19 @@
 .dot:nth-child(3) { animation-delay: .3s; }
 @keyframes word-in { from { opacity: 0; transform: translateY(0.35em); } to { opacity: 1; transform: none; } }
 .word-in { animation: word-in .45s ease both; }
+
+/* Linhas animadas dos diagramas de conexão (TrustBar) */
+.flow-line {
+  background: repeating-linear-gradient(90deg, var(--color-brand-500) 0 6px, transparent 6px 11px);
+  background-size: 11px 2px;
+  animation: flow-x 0.9s linear infinite;
+}
+@keyframes flow-x { to { background-position: 11px 0; } }
+.flow-path {
+  stroke: var(--color-brand-500);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  vector-effect: non-scaling-stroke;
+  animation: flow-dash 0.9s linear infinite;
+}
+@keyframes flow-dash { to { stroke-dashoffset: -11; } }
