@@ -51,6 +51,12 @@ function ChatMock() {
 export default function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-ink-950 pt-28 pb-20 sm:pt-36 sm:pb-28">
+      {/* Foto de fundo: 85% de transparência, máscara azul e degradê da esquerda para a direita */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <img src="/hero-bg.webp" alt="" className="h-full w-full object-cover object-right opacity-15" />
+        <div className="absolute inset-0 bg-brand-600 mix-blend-color" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/60 to-transparent" />
+      </div>
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.5]"
         style={{
