@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import {
-  BadgeCheck, BadgeDollarSign, CircleHelp, Newspaper, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
+  BadgeCheck, BadgeDollarSign, CircleHelp, Newspaper, PlayCircle, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
 } from "lucide-react";
 import type { SiteContent } from "../content/defaults";
 import { Card, Grid, ListEditor, NumberField, TextArea, TextField, Toggle, WordList } from "./fields";
@@ -301,6 +301,28 @@ function BlogHomeForm({ value: v, set }: Props<"blog">) {
   );
 }
 
+function TutorialForm({ value: v, set }: Props<"tutorial">) {
+  return (
+    <>
+      <Card title="Vídeo" description="Página /tutorial, com atalhos no menu, no rodapé e na seção Como funciona.">
+        <Toggle label="Mostrar os atalhos para o tutorial" hint="A página /tutorial continua existindo mesmo com os atalhos desligados." checked={v.show} onChange={(show) => set({ show })} />
+        <TextField label="Link do vídeo no YouTube" value={v.videoUrl} onChange={(videoUrl) => set({ videoUrl })} type="url" />
+        <Grid>
+          <TextField label="Duração" value={v.duration} onChange={(duration) => set({ duration })} placeholder="34 min" />
+          <TextField label="Texto do atalho" value={v.linkLabel} onChange={(linkLabel) => set({ linkLabel })} />
+        </Grid>
+      </Card>
+      <Card title="Textos da página">
+        <TextField label="Chamada" value={v.eyebrow} onChange={(eyebrow) => set({ eyebrow })} />
+        <TextField label="Título" value={v.title} onChange={(title) => set({ title })} hint={HIGHLIGHT_HINT} />
+        <TextArea label="Texto de apoio" value={v.lead} onChange={(lead) => set({ lead })} />
+        <TextField label="Título da lista" value={v.topicsTitle} onChange={(topicsTitle) => set({ topicsTitle })} />
+        <WordList label="O que o vídeo mostra" words={v.topics} onChange={(topics) => set({ topics })} hint="Deixe vazio para esconder a lista." />
+      </Card>
+    </>
+  );
+}
+
 function FaqForm({ value: v, set }: Props<"faq">) {
   return (
     <>
@@ -408,6 +430,7 @@ export const SECTIONS: SectionDef[] = [
   { slug: "como-funciona", label: "Como funciona", icon: Footprints, render: bind("steps", StepsForm) },
   { slug: "planos", label: "Planos e preços", icon: BadgeDollarSign, render: bind("plans", PlansForm) },
   { slug: "blog-home", label: "Blog na home", icon: Newspaper, render: bind("blog", BlogHomeForm) },
+  { slug: "tutorial", label: "Tutorial em vídeo", icon: PlayCircle, render: bind("tutorial", TutorialForm) },
   { slug: "duvidas", label: "Dúvidas (FAQ)", icon: CircleHelp, render: bind("faq", FaqForm) },
   { slug: "chamada-final", label: "Chamada final", icon: Megaphone, render: bind("cta", CtaForm) },
   { slug: "cabecalho-rodape", label: "Cabeçalho e rodapé", icon: PanelBottom, render: (c, u) => <HeaderFooterForm value={c} set={u} /> },

@@ -2,7 +2,7 @@ import { Highlight, useContent } from "../content/ContentContext";
 import { Container, SectionTitle } from "./ui";
 
 export default function HowItWorks() {
-  const { steps, settings } = useContent();
+  const { steps, settings, tutorial } = useContent();
   return (
     <section className="bg-ink-950 py-20 sm:py-28">
       <Container>
@@ -22,8 +22,17 @@ export default function HowItWorks() {
             </li>
           ))}
         </ol>
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a href={settings.signupUrl} className="btn btn-primary-dark">{steps.ctaLabel}</a>
+          {tutorial.show && (
+            <a href="/tutorial" className="btn btn-ghost-dark">
+              <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z" />
+              </svg>
+              {tutorial.linkLabel}
+              {tutorial.duration ? <span className="text-mist-300">({tutorial.duration})</span> : null}
+            </a>
+          )}
         </div>
       </Container>
     </section>

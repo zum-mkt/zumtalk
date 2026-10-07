@@ -11,7 +11,8 @@ const NAV = [
 ];
 
 export default function Header() {
-  const { header, settings } = useContent();
+  const { header, settings, tutorial } = useContent();
+  const nav = tutorial.show ? [...NAV, { href: "/tutorial", label: "Tutorial" }] : NAV;
   const LOGIN_URL = settings.loginUrl;
   const SIGNUP_URL = settings.signupUrl;
   const [open, setOpen] = useState(false);
@@ -38,7 +39,7 @@ export default function Header() {
         </a>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Principal">
-          {NAV.map((n) => (
+          {nav.map((n) => (
             <a key={n.href} href={n.href} className="text-sm font-medium text-mist-200 transition hover:text-white">
               {n.label}
             </a>
@@ -69,7 +70,7 @@ export default function Header() {
       {open && (
         <div className="border-t border-white/10 bg-ink-950 md:hidden">
           <Container className="flex flex-col gap-1 py-4">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <a
                 key={n.href}
                 href={n.href}

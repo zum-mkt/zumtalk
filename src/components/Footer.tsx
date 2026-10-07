@@ -29,7 +29,7 @@ export function FinalCta() {
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const { footer, settings } = useContent();
+  const { footer, settings, tutorial } = useContent();
   return (
     <footer className="border-t border-white/10 bg-ink-950 pb-10 pt-14 text-mist-300">
       <Container>
@@ -44,6 +44,8 @@ export default function Footer() {
               <li><a className="hover:text-white" href="/#funcionalidades">Funcionalidades</a></li>
               <li><a className="hover:text-white" href="/#planos">Planos</a></li>
               <li><a className="hover:text-white" href="/#faq">Dúvidas frequentes</a></li>
+              {tutorial.show && <li><a className="hover:text-white" href="/tutorial">Tutorial em vídeo</a></li>}
+              <li><a className="hover:text-white" href="/blog">Blog</a></li>
               <li><a className="hover:text-white" href={settings.loginUrl}>Entrar no sistema</a></li>
             </ul>
           </nav>

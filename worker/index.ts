@@ -2,6 +2,7 @@
 // Arquivos estáticos (JS, CSS, imagens) são servidos direto pelo Cloudflare sem passar por aqui.
 
 import { blogHead, handleBlogAdmin, publicIndex, publicPost, rss, serveMedia, sitemap } from "./blog";
+import { mergeContent } from "../src/content/defaults";
 
 interface Env {
   ASSETS: Fetcher;
@@ -207,6 +208,31 @@ async function pageExtras(env: Env, url: URL): Promise<Extras> {
         description,
         html: blogHead({ title, description, image, url: url.origin + path, type: "article", jsonLd }),
       },
+      status: 200,
+    };
+  }
+
+  if (path === "/tutorial") {
+    const { tutorial } = mergeContent(await env.CONTENT.get(CONTENT_KEY, "json"));
+    const id = tutorial.videoUrl.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)?.[1];
+    const title = `${tutorial.title.replace(/\*/g, "")} | ZumTalk`;
+    const description = tutorial.lead;
+    const image = id ? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg` : null;
+    const minutes = Number(tutorial.duration.match(/\d+/)?.[0] ?? 0);
+    const jsonLd = id && {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: tutorial.title.replace(/\*/g, ""),
+      description,
+      thumbnailUrl: image,
+      uploadDate: "2026-01-29",
+      ...(minutes ? { duration: `PT${minutes}M` } : {}),
+      embedUrl: `https://www.youtube.com/embed/${id}`,
+      contentUrl: `https://www.youtube.com/watch?v=${id}`,
+    };
+    return {
+      scripts: "",
+      head: { title, description, html: blogHead({ title, description, image, url: url.origin + path, type: "website", jsonLd }) },
       status: 200,
     };
   }

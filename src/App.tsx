@@ -8,6 +8,7 @@ import HowItWorks from "./components/HowItWorks";
 import Plans from "./components/Plans";
 import BlogPreview from "./components/BlogPreview";
 import Faq from "./components/Faq";
+import TutorialPage from "./components/TutorialPage";
 import Footer, { FinalCta } from "./components/Footer";
 import { WhatsIcon } from "./components/ui";
 import { ContentProvider, initialContent, useContent, whatsappUrl } from "./content/ContentContext";
@@ -31,6 +32,7 @@ function Page() {
       </div>
     );
   }
+  if (p === "/tutorial") return <TutorialPage />;
   if (p === "/blog") return <BlogListPage categorySlug={null} />;
   const cat = p.match(/^\/blog\/categoria\/([\w-]+)$/);
   if (cat) return <BlogListPage categorySlug={cat[1]} />;

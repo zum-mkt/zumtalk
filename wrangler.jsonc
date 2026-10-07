@@ -11,7 +11,7 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     // O Worker só roda nestas rotas; JS, CSS e imagens vão direto do cache do Cloudflare.
-    "run_worker_first": ["/api/*", "/", "/planos", "/planos/", "/admin", "/admin/*", "/blog", "/blog/*", "/media/*", "/sitemap.xml"]
+    "run_worker_first": ["/api/*", "/", "/planos", "/planos/", "/admin", "/admin/*", "/tutorial", "/blog", "/blog/*", "/media/*", "/sitemap.xml"]
   },
   // Domínios do site. O Cloudflare cria o DNS e o certificado sozinho; www redireciona para o domínio principal.
   "routes": [

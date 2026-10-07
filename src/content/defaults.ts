@@ -74,6 +74,17 @@ export type SiteContent = {
     };
   };
   blog: { show: boolean; eyebrow: string; title: string; lead: string; ctaLabel: string };
+  tutorial: {
+    show: boolean; // mostra os atalhos no menu, no rodapé e em "Como funciona"
+    videoUrl: string;
+    eyebrow: string;
+    title: string;
+    lead: string;
+    duration: string;
+    topicsTitle: string;
+    topics: string[];
+    linkLabel: string;
+  };
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] };
   cta: { eyebrow: string; title: string; lead: string; primary: string; secondary: string; note: string };
   footer: { about: string; copyright: string };
@@ -262,6 +273,24 @@ export const DEFAULT_CONTENT: SiteContent = {
     title: "Conteúdo para *vender mais* pelo WhatsApp.",
     lead: "Dicas de atendimento, automação e IA para o seu time.",
     ctaLabel: "Ver todos os artigos →",
+  },
+  tutorial: {
+    show: true,
+    videoUrl: "https://www.youtube.com/watch?v=5a5Qfc156b0",
+    eyebrow: "Tutorial",
+    title: "Aprenda a usar o ZumTalk, *passo a passo*.",
+    lead: "Veja o sistema por dentro: da conexão do seu WhatsApp ao funil de vendas. Ideal para quem está conhecendo a plataforma e para quem acabou de começar.",
+    duration: "34 min",
+    topicsTitle: "O que você vai ver",
+    topics: [
+      "Conectar o WhatsApp pelo QR Code",
+      "Agente de chat com IA",
+      "Funil de vendas",
+      "Contatos e conversas",
+      "Produtos e tarefas",
+      "Conversões",
+    ],
+    linkLabel: "Ver o tutorial completo",
   },
   faq: {
     eyebrow: "Dúvidas frequentes",

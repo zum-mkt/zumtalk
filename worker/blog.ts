@@ -187,6 +187,7 @@ export async function sitemap(kv: KVNamespace, origin: string): Promise<Response
   const urls = [
     `${origin}/`,
     `${origin}/planos`,
+    `${origin}/tutorial`,
     `${origin}/blog`,
     ...categories.map((c) => `${origin}/blog/categoria/${c.slug}`),
     ...posts.map((p) => `${origin}/blog/${p.slug}`),
