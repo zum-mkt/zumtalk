@@ -4,6 +4,8 @@
   "account_id": "038360028859e142fb2dd18145ced1cf",
   "compatibility_date": "2026-10-05",
   "main": "worker/index.ts",
+  // Mantém o endereço zumtalk-site...workers.dev como reserva.
+  "workers_dev": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -11,6 +13,11 @@
     // O Worker só roda nestas rotas; JS, CSS e imagens vão direto do cache do Cloudflare.
     "run_worker_first": ["/api/*", "/", "/planos", "/planos/", "/admin", "/admin/*", "/blog", "/blog/*", "/media/*", "/sitemap.xml"]
   },
+  // Domínios do site. O Cloudflare cria o DNS e o certificado sozinho; www redireciona para o domínio principal.
+  "routes": [
+    { "pattern": "zumtalk.com", "custom_domain": true },
+    { "pattern": "www.zumtalk.com", "custom_domain": true }
+  ],
   // Conteúdo editado no painel /admin. A senha do painel fica no segredo ADMIN_PASSWORD.
   "kv_namespaces": [{ "binding": "CONTENT", "id": "157539242c1a4e1abe4a1418527d4b46" }]
 }

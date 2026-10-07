@@ -211,6 +211,12 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // www.zumtalk.com -> zumtalk.com (endereço único para o Google e para os links).
+    if (url.hostname.startsWith("www.")) {
+      url.hostname = url.hostname.slice(4);
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
     if (url.pathname.startsWith("/media/")) return serveMedia(env.CONTENT, url.pathname.slice(7));
     if (url.pathname === "/blog/rss.xml") return rss(env.CONTENT, url.origin);
