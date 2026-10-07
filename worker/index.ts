@@ -1,5 +1,7 @@
-// Worker do site: serve a API do painel /admin e injeta o conteúdo salvo no index.html.
+// Worker do site: serve a API do painel /admin, o blog e injeta o conteúdo salvo no index.html.
 // Arquivos estáticos (JS, CSS, imagens) são servidos direto pelo Cloudflare sem passar por aqui.
+
+import { blogHead, handleBlogAdmin, publicIndex, publicPost, rss, serveMedia, sitemap } from "./blog";
 
 interface Env {
   ASSETS: Fetcher;
@@ -128,7 +130,81 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     return json({ ok: true, content: JSON.parse(previous) });
   }
 
+  if (pathname === "/api/blog" && method === "GET") return json(await publicIndex(env.CONTENT));
+
+  const slugMatch = pathname.match(/^\/api\/blog\/posts\/([\w-]+)$/);
+  if (slugMatch && method === "GET") {
+    const data = await publicPost(env.CONTENT, slugMatch[1]);
+    return data ? json(data) : json({ error: "Post não encontrado." }, 404);
+  }
+
+  if (pathname.startsWith("/api/admin/")) {
+    if (!(await isAuthed(request, env))) return json({ error: "Sessão expirada. Entre de novo." }, 401);
+    return handleBlogAdmin(request, env.CONTENT, pathname, json);
+  }
+
   return json({ error: "Não encontrado." }, 404);
+}
+
+// "<" escapado para o JSON não conseguir fechar a tag <script>.
+const dataScript = (name: string, value: unknown) =>
+  `<script>window.${name}=${JSON.stringify(value).replace(/</g, "\\u003c")}</script>`;
+
+type Extras = { scripts: string; head?: { title: string; description: string; html: string }; status: number };
+
+// Dados do blog e metadados de compartilhamento de cada página HTML.
+async function pageExtras(env: Env, url: URL): Promise<Extras> {
+  const path = url.pathname.replace(/\/+$/, "") || "/";
+
+  if (path === "/") {
+    const idx = await publicIndex(env.CONTENT);
+    return { scripts: idx.posts.length ? dataScript("__BLOG__", { posts: idx.posts.slice(0, 3), categories: idx.categories }) : "", status: 200 };
+  }
+
+  if (path === "/blog" || path.startsWith("/blog/categoria/")) {
+    const idx = await publicIndex(env.CONTENT);
+    const cat = path.startsWith("/blog/categoria/") ? idx.categories.find((c) => c.slug === path.split("/")[3]) : null;
+    const title = cat ? `${cat.name} | Blog ZumTalk` : "Blog ZumTalk | Atendimento e vendas no WhatsApp";
+    const description = "Dicas, novidades e estratégias de atendimento, vendas e automação com IA no WhatsApp.";
+    return {
+      scripts: dataScript("__BLOG__", idx),
+      head: { title, description, html: blogHead({ title, description, url: url.origin + path, type: "website" }) },
+      status: path !== "/blog" && !cat ? 404 : 200,
+    };
+  }
+
+  const postMatch = path.match(/^\/blog\/([\w-]+)$/);
+  if (postMatch) {
+    const found = await publicPost(env.CONTENT, postMatch[1]);
+    if (!found) return { scripts: dataScript("__BLOG_POST__", null), status: 404 };
+    const { post } = found;
+    const title = post.seoTitle || post.title;
+    const description = post.seoDescription || post.excerpt || post.title;
+    const image = post.cover ? url.origin + post.cover : null;
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description,
+      image: image ?? undefined,
+      datePublished: post.publishedAt,
+      dateModified: post.updatedAt,
+      author: { "@type": "Person", name: post.author },
+      publisher: { "@type": "Organization", name: "ZumTalk", logo: { "@type": "ImageObject", url: `${url.origin}/logo.svg` } },
+      mainEntityOfPage: url.origin + path,
+    };
+    return {
+      scripts: dataScript("__BLOG_POST__", found),
+      head: {
+        title: `${title} | Blog ZumTalk`,
+        description,
+        html: blogHead({ title, description, image, url: url.origin + path, type: "article", jsonLd }),
+      },
+      status: 200,
+    };
+  }
+
+  return { scripts: "", status: 200 };
 }
 
 export default {
@@ -136,27 +212,36 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith("/api/")) return handleApi(request, env, url);
+    if (url.pathname.startsWith("/media/")) return serveMedia(env.CONTENT, url.pathname.slice(7));
+    if (url.pathname === "/blog/rss.xml") return rss(env.CONTENT, url.origin);
+    if (url.pathname === "/sitemap.xml") return sitemap(env.CONTENT, url.origin);
 
-    // Páginas HTML (/, /planos, /admin): busca o index.html e injeta o conteúdo salvo.
+    // Páginas HTML (/, /planos, /blog, /admin): busca o index.html e injeta o conteúdo salvo.
     const res = await env.ASSETS.fetch(request);
     if (!(res.headers.get("content-type") ?? "").includes("text/html")) return res;
 
     const isAdmin = url.pathname.startsWith("/admin");
-    const saved = isAdmin ? null : await env.CONTENT.get(CONTENT_KEY);
-    const out = saved
-      ? new HTMLRewriter()
-          .on("head", {
-            element(el) {
-              // "<" escapado para o JSON não conseguir fechar a tag <script>.
-              el.append(`<script>window.__SITE_CONTENT__=${saved.replace(/</g, "\\u003c")}</script>`, { html: true });
-            },
-          })
-          .transform(res)
-      : new Response(res.body, res);
+    const [saved, extras] = isAdmin ? [null, null] : await Promise.all([env.CONTENT.get(CONTENT_KEY), pageExtras(env, url)]);
+    const scripts = (saved ? `<script>window.__SITE_CONTENT__=${saved.replace(/</g, "\\u003c")}</script>` : "") + (extras?.scripts ?? "");
+    const head = extras?.head;
+
+    let rewriter = new HTMLRewriter().on("head", {
+      element(el) {
+        if (scripts) el.append(scripts, { html: true });
+        if (head) el.append(head.html, { html: true });
+      },
+    });
+    if (head) {
+      rewriter = rewriter
+        .on("title", { element: (el) => void el.setInnerContent(head.title) })
+        .on('meta[name="description"]', { element: (el) => void el.setAttribute("content", head.description) })
+        .on('meta[property^="og:"]', { element: (el) => void el.remove() });
+    }
+    const out = rewriter.transform(res);
 
     const headers = new Headers(out.headers);
     headers.set("cache-control", "no-cache");
     if (isAdmin) headers.set("x-robots-tag", "noindex, nofollow");
-    return new Response(out.body, { status: out.status, headers });
+    return new Response(out.body, { status: extras?.status ?? out.status, headers });
   },
 } satisfies ExportedHandler<Env>;

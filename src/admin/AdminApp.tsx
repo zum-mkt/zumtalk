@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
-  ChevronLeft, ExternalLink, History, LayoutGrid, Loader2, LogIn, LogOut, Menu, RotateCcw, Save, Undo2, X,
+  ChevronLeft, ExternalLink, FolderTree, History, LayoutGrid, Loader2, LogIn, LogOut, Menu, Newspaper, RotateCcw, Save, Undo2, X,
 } from "lucide-react";
+import { BlogCategories, BlogPostForm, BlogPostList, type BlogNav } from "./blog/BlogAdmin";
 import { DEFAULT_CONTENT, mergeContent, type SiteContent } from "../content/defaults";
 import { api, ApiError } from "./api";
 import { cn, Card } from "./fields";
@@ -117,6 +118,21 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
 
   const dirty = useMemo(() => !!saved && !!draft && JSON.stringify(saved) !== JSON.stringify(draft), [saved, draft]);
   const section = SECTIONS.find((s) => s.slug === slug);
+  // Telas do blog: salvam por conta própria (não usam o "Salvar e publicar" do conteúdo).
+  const blogView = slug === "blog" || slug.startsWith("blog/") || slug === "blog-categorias";
+  const blogDirty = useRef(false);
+  const setBlogDirty = useCallback((d: boolean) => {
+    blogDirty.current = d;
+  }, []);
+
+  // Aviso ao fechar a aba com post ou categorias não salvos.
+  useEffect(() => {
+    const warn = (e: BeforeUnloadEvent) => {
+      if (blogDirty.current) e.preventDefault();
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
 
   const handleError = useCallback(
     (err: unknown) => {
@@ -181,8 +197,10 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [save]);
 
-  const go = (next: string) => {
-    window.history.pushState(null, "", next ? `/admin/${next}` : "/admin");
+  const go = (next: string, replace = false) => {
+    if (!replace && blogDirty.current && !confirm("Há alterações não salvas neste post. Sair mesmo assim?")) return;
+    blogDirty.current = false;
+    window.history[replace ? "replaceState" : "pushState"](null, "", next ? `/admin/${next}` : "/admin");
     setSlug(next);
     setMobileNav(false);
     window.scrollTo(0, 0);
@@ -219,16 +237,32 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
     }
   }
 
+  const blogNav: BlogNav = {
+    go,
+    notify: (kind, text) => setToast({ kind, text }),
+    onError: handleError,
+    setDirty: setBlogDirty,
+  };
+
   if (!draft) return <FullScreenLoader />;
+
+  const blogTitle = slug === "blog-categorias" ? "Categorias do blog" : slug === "blog/novo" ? "Novo post" : slug.startsWith("blog/") ? "Editar post" : "Blog";
 
   const nav = (
     <nav aria-label="Seções do site" className="flex-1 overflow-y-auto px-2.5 py-3">
       <ul className="space-y-0.5">
-        {[{ slug: "", label: "Visão geral", icon: LayoutGrid }, ...SECTIONS].map((item) => {
+        {[
+          { slug: "", label: "Visão geral", icon: LayoutGrid },
+          { slug: "blog", label: "Blog: posts", icon: Newspaper },
+          { slug: "blog-categorias", label: "Blog: categorias", icon: FolderTree },
+          ...SECTIONS,
+        ].map((item, i) => {
           const Icon = item.icon;
-          const active = item.slug === slug || (!item.slug && !section);
+          const active =
+            item.slug === "blog" ? slug === "blog" || slug.startsWith("blog/") : item.slug === slug || (!item.slug && !section && !blogView);
           return (
             <li key={item.slug}>
+              {i === 3 ? <p className={cn("px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-widest text-white/40", collapsed && "sr-only")}>Página inicial</p> : null}
               <button
                 type="button"
                 onClick={() => go(item.slug)}
@@ -295,10 +329,10 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
             <button type="button" onClick={() => setMobileNav(true)} aria-label="Abrir menu" className="rounded-lg p-2 text-ink-700 hover:bg-brand-50 lg:hidden">
               <Menu className="size-5" />
             </button>
-            <h1 className="truncate font-heading text-lg font-extrabold text-ink-900">{section?.label ?? "Visão geral"}</h1>
+            <h1 className="truncate font-heading text-lg font-extrabold text-ink-900">{blogView ? blogTitle : section?.label ?? "Visão geral"}</h1>
           </div>
           <div className="flex items-center gap-2">
-            {dirty ? (
+            {blogView ? null : dirty ? (
               <>
                 <span className="hidden text-xs font-semibold text-amber-700 md:inline">Alterações não salvas</span>
                 <button
@@ -313,6 +347,7 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
             <button
               type="button"
               onClick={() => void save()}
+              hidden={blogView}
               disabled={!dirty || saving}
               title="Ctrl+S"
               className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-bold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-mist-200 disabled:text-mist-500"
@@ -329,8 +364,14 @@ function Panel({ onLoggedOut }: { onLoggedOut: () => void }) {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-3xl flex-1 space-y-5 p-4 sm:p-6">
-          {section ? (
+        <main className={cn("mx-auto w-full flex-1 space-y-5 p-4 sm:p-6", slug.startsWith("blog/") ? "max-w-4xl" : "max-w-3xl")}>
+          {slug === "blog" ? (
+            <BlogPostList nav={blogNav} />
+          ) : slug === "blog-categorias" ? (
+            <BlogCategories nav={blogNav} />
+          ) : slug.startsWith("blog/") ? (
+            <BlogPostForm key={slug} id={slug === "blog/novo" ? null : slug.slice(5)} nav={blogNav} />
+          ) : section ? (
             section.render(draft, (patch) => setDraft((d) => (d ? { ...d, ...patch } : d)))
           ) : (
             <Overview onGo={go} onRestorePrevious={restorePrevious} onReset={resetDefaults} />

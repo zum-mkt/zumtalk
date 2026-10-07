@@ -6,44 +6,60 @@ import Features from "./components/Features";
 import Niches from "./components/Niches";
 import HowItWorks from "./components/HowItWorks";
 import Plans from "./components/Plans";
+import BlogPreview from "./components/BlogPreview";
 import Faq from "./components/Faq";
 import Footer, { FinalCta } from "./components/Footer";
 import { WhatsIcon } from "./components/ui";
 import { ContentProvider, initialContent, useContent, whatsappUrl } from "./content/ContentContext";
-import type { SiteContent } from "./content/defaults";
 
-// O painel só é baixado quando alguém abre /admin.
+// Só baixados quando alguém abre essas páginas.
 const AdminApp = lazy(() => import("./admin/AdminApp"));
+const BlogListPage = lazy(() => import("./blog/BlogPages").then((m) => ({ default: m.BlogListPage })));
+const BlogPostPage = lazy(() => import("./blog/BlogPages").then((m) => ({ default: m.BlogPostPage })));
 
 const path = () => window.location.pathname.replace(/\/+$/, "");
 
+function Page() {
+  const p = path();
+  // /planos mostra só a calculadora (URL já usada em links e anúncios).
+  if (p === "/planos") {
+    return (
+      <div className="pt-12">
+        <Plans />
+        <Faq />
+        <FinalCta />
+      </div>
+    );
+  }
+  if (p === "/blog") return <BlogListPage categorySlug={null} />;
+  const cat = p.match(/^\/blog\/categoria\/([\w-]+)$/);
+  if (cat) return <BlogListPage categorySlug={cat[1]} />;
+  const post = p.match(/^\/blog\/([\w-]+)$/);
+  if (post) return <BlogPostPage slug={post[1]} />;
+  return (
+    <>
+      <Hero />
+      <TrustBar />
+      <Features />
+      <Niches />
+      <HowItWorks />
+      <Plans />
+      <BlogPreview />
+      <Faq />
+      <FinalCta />
+    </>
+  );
+}
+
 export function Site() {
   const { settings } = useContent();
-  // Rota simples: /planos mostra só a calculadora (URL já usada em links e anúncios).
-  const isPlansPage = path() === "/planos";
-
   return (
     <>
       <Header />
-      <main>
-        {isPlansPage ? (
-          <div className="pt-12">
-            <Plans />
-            <Faq />
-            <FinalCta />
-          </div>
-        ) : (
-          <>
-            <Hero />
-            <TrustBar />
-            <Features />
-            <Niches />
-            <HowItWorks />
-            <Plans />
-            <Faq />
-            <FinalCta />
-          </>
-        )}
+      <main className="min-h-[70vh]">
+        <Suspense fallback={<div className="min-h-screen" />}>
+          <Page />
+        </Suspense>
       </main>
       <Footer />
       <a
@@ -67,9 +83,8 @@ export default function App() {
       </Suspense>
     );
   }
-  const content: SiteContent = initialContent();
   return (
-    <ContentProvider value={content}>
+    <ContentProvider value={initialContent()}>
       <Site />
     </ContentProvider>
   );

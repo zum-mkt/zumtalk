@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import {
-  BadgeCheck, BadgeDollarSign, CircleHelp, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
+  BadgeCheck, BadgeDollarSign, CircleHelp, Newspaper, Footprints, Home, LayoutGrid, Megaphone, PanelBottom, Settings, Sparkles, Users,
 } from "lucide-react";
 import type { SiteContent } from "../content/defaults";
 import { Card, Grid, ListEditor, NumberField, TextArea, TextField, Toggle, WordList } from "./fields";
@@ -289,6 +289,18 @@ function PlansForm({ value: v, set }: Props<"plans">) {
   );
 }
 
+function BlogHomeForm({ value: v, set }: Props<"blog">) {
+  return (
+    <Card title="Bloco do blog na página inicial" description="Mostra os 3 posts mais recentes, antes das Dúvidas. Só aparece quando há post publicado.">
+      <Toggle label="Mostrar na página inicial" checked={v.show} onChange={(show) => set({ show })} />
+      <TextField label="Chamada" value={v.eyebrow} onChange={(eyebrow) => set({ eyebrow })} />
+      <TextField label="Título" value={v.title} onChange={(title) => set({ title })} hint={HIGHLIGHT_HINT} />
+      <TextArea label="Texto de apoio" value={v.lead} onChange={(lead) => set({ lead })} rows={2} />
+      <TextField label="Texto do botão" value={v.ctaLabel} onChange={(ctaLabel) => set({ ctaLabel })} />
+    </Card>
+  );
+}
+
 function FaqForm({ value: v, set }: Props<"faq">) {
   return (
     <>
@@ -395,6 +407,7 @@ export const SECTIONS: SectionDef[] = [
   { slug: "para-quem-e", label: "Para quem é", icon: Users, render: bind("niches", NichesForm) },
   { slug: "como-funciona", label: "Como funciona", icon: Footprints, render: bind("steps", StepsForm) },
   { slug: "planos", label: "Planos e preços", icon: BadgeDollarSign, render: bind("plans", PlansForm) },
+  { slug: "blog-home", label: "Blog na home", icon: Newspaper, render: bind("blog", BlogHomeForm) },
   { slug: "duvidas", label: "Dúvidas (FAQ)", icon: CircleHelp, render: bind("faq", FaqForm) },
   { slug: "chamada-final", label: "Chamada final", icon: Megaphone, render: bind("cta", CtaForm) },
   { slug: "cabecalho-rodape", label: "Cabeçalho e rodapé", icon: PanelBottom, render: (c, u) => <HeaderFooterForm value={c} set={u} /> },

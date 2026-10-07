@@ -7,6 +7,7 @@ const NAV = [
   { href: "/#nichos", label: "Para quem é" },
   { href: "/#planos", label: "Planos" },
   { href: "/#faq", label: "Dúvidas" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export default function Header() {
@@ -15,7 +16,8 @@ export default function Header() {
   const SIGNUP_URL = settings.signupUrl;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const solid = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") === "/planos";
+  // Fora da home (planos, blog) o fundo é claro, então o cabeçalho já começa sólido.
+  const solid = typeof window !== "undefined" && window.location.pathname.replace(/\/+$/, "") !== "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);

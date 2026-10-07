@@ -73,6 +73,7 @@ export type SiteContent = {
       maxFlows: number;
     };
   };
+  blog: { show: boolean; eyebrow: string; title: string; lead: string; ctaLabel: string };
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] };
   cta: { eyebrow: string; title: string; lead: string; primary: string; secondary: string; note: string };
   footer: { about: string; copyright: string };
@@ -254,6 +255,13 @@ export const DEFAULT_CONTENT: SiteContent = {
       maxNumbers: 20,
       maxFlows: 10,
     },
+  },
+  blog: {
+    show: true,
+    eyebrow: "Blog",
+    title: "Conteúdo para *vender mais* pelo WhatsApp.",
+    lead: "Dicas de atendimento, automação e IA para o seu time.",
+    ctaLabel: "Ver todos os artigos →",
   },
   faq: {
     eyebrow: "Dúvidas frequentes",
