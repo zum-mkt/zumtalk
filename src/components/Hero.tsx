@@ -106,7 +106,7 @@ export default function Hero() {
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-mist-300">{hero.lead}</p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href={whatsappUrl(settings.whatsappNumber, settings.whatsappMessage)} target="_blank" rel="noopener noreferrer" className="btn btn-primary-dark">
+            <a href={whatsappUrl(settings.botNumber, settings.botMessage)} target="_blank" rel="noopener noreferrer" className="btn btn-primary-dark">
               <WhatsIcon /> {hero.ctaPrimary}
             </a>
             <a href={settings.signupUrl} className="btn btn-ghost-dark">

@@ -5,8 +5,10 @@ export type Item = { title: string; text: string };
 
 export type SiteContent = {
   settings: {
-    whatsappNumber: string;
+    whatsappNumber: string; // atendimento humano: balão, dúvidas, especialista, plano, rodapé
     whatsappMessage: string;
+    botNumber: string; // demonstração do bot: botão principal do topo
+    botMessage: string;
     signupUrl: string;
     loginUrl: string;
     trialUrl: string;
@@ -92,8 +94,10 @@ export type SiteContent = {
 
 export const DEFAULT_CONTENT: SiteContent = {
   settings: {
-    whatsappNumber: "5514996824149",
+    whatsappNumber: "5511995101025",
     whatsappMessage: "Olá! Gostaria de saber mais sobre o ZumTalk.",
+    botNumber: "5514996824149",
+    botMessage: "Olá! Quero conhecer o bot do ZumTalk.",
     signupUrl: "https://sistema.zumtalk.com/pt/users/sign_up",
     loginUrl: "https://sistema.zumtalk.com/",
     trialUrl: "https://sistema.zumtalk.com/enrollment/new?product=Teste+Gr%C3%A1tis",

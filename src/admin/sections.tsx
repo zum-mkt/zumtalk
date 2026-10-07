@@ -387,9 +387,13 @@ function HeaderFooterForm({ value, set }: { value: Pick<SiteContent, "header" | 
 function SettingsForm({ value: v, set }: Props<"settings">) {
   return (
     <>
-      <Card title="WhatsApp" description="Usado em todos os botões de WhatsApp do site.">
-        <TextField label="Número com DDI e DDD" value={v.whatsappNumber} onChange={(whatsappNumber) => set({ whatsappNumber })} hint="Só números, ex.: 5514996824149" />
+      <Card title="WhatsApp de atendimento" description="Balão flutuante, “Tirar dúvidas”, “Falar com um especialista”, envio do plano pela calculadora e link do rodapé.">
+        <TextField label="Número com DDI e DDD" value={v.whatsappNumber} onChange={(whatsappNumber) => set({ whatsappNumber })} hint="Só números, ex.: 5511995101025" />
         <TextArea label="Mensagem inicial" value={v.whatsappMessage} onChange={(whatsappMessage) => set({ whatsappMessage })} rows={2} />
+      </Card>
+      <Card title="WhatsApp do bot (demonstração)" description="Botão principal do topo da página, “Falar com o bot no WhatsApp”.">
+        <TextField label="Número com DDI e DDD" value={v.botNumber} onChange={(botNumber) => set({ botNumber })} hint="Só números, ex.: 5514996824149" />
+        <TextArea label="Mensagem inicial" value={v.botMessage} onChange={(botMessage) => set({ botMessage })} rows={2} />
       </Card>
       <Card title="Links do sistema">
         <TextField label="Cadastro (teste grátis)" value={v.signupUrl} onChange={(signupUrl) => set({ signupUrl })} type="url" />
