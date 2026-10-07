@@ -192,7 +192,7 @@ export default function Plans() {
               ))}
             </ul>
 
-            <a href={settings.trialUrl} className="btn btn-primary-dark mt-8 w-full">
+            <a href={settings.signupUrl} className="btn btn-primary-dark mt-8 w-full">
               Preparar meu teste grátis de 7 dias
             </a>
             <a href={waUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-dark mt-3 w-full">

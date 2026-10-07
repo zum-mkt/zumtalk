@@ -396,9 +396,8 @@ function SettingsForm({ value: v, set }: Props<"settings">) {
         <TextArea label="Mensagem inicial" value={v.botMessage} onChange={(botMessage) => set({ botMessage })} rows={2} />
       </Card>
       <Card title="Links do sistema">
-        <TextField label="Cadastro (teste grátis)" value={v.signupUrl} onChange={(signupUrl) => set({ signupUrl })} type="url" />
+        <TextField label="Teste grátis" value={v.signupUrl} onChange={(signupUrl) => set({ signupUrl })} type="url" hint="Usado em todos os botões de teste grátis do site." />
         <TextField label="Login" value={v.loginUrl} onChange={(loginUrl) => set({ loginUrl })} type="url" />
-        <TextField label="Teste grátis a partir da calculadora" value={v.trialUrl} onChange={(trialUrl) => set({ trialUrl })} type="url" />
       </Card>
       <Card title="Contato e institucional">
         <TextField label="E-mail" value={v.email} onChange={(email) => set({ email })} type="email" />

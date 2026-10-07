@@ -9,9 +9,8 @@ export type SiteContent = {
     whatsappMessage: string;
     botNumber: string; // demonstração do bot: botão principal do topo
     botMessage: string;
-    signupUrl: string;
+    signupUrl: string; // todos os botões de teste grátis
     loginUrl: string;
-    trialUrl: string;
     email: string;
     privacyUrl: string;
     termsUrl: string;
@@ -98,9 +97,8 @@ export const DEFAULT_CONTENT: SiteContent = {
     whatsappMessage: "Olá! Gostaria de saber mais sobre o ZumTalk.",
     botNumber: "5514996824149",
     botMessage: "Olá! Quero conhecer o bot do ZumTalk.",
-    signupUrl: "https://sistema.zumtalk.com/pt/users/sign_up",
+    signupUrl: "https://sistema.zumtalk.com/enrollment/new?product=Teste+Gr%C3%A1tis",
     loginUrl: "https://sistema.zumtalk.com/",
-    trialUrl: "https://sistema.zumtalk.com/enrollment/new?product=Teste+Gr%C3%A1tis",
     email: "zum@agenciazum.com.br",
     privacyUrl: "https://www.agenciazum.com.br/privacidade",
     termsUrl: "https://www.agenciazum.com.br/termos",
