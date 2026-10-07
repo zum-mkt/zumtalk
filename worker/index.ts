@@ -6,7 +6,8 @@ import { blogHead, handleBlogAdmin, publicIndex, publicPost, rss, serveMedia, si
 interface Env {
   ASSETS: Fetcher;
   CONTENT: KVNamespace;
-  ADMIN_PASSWORD?: string;
+  ADMIN_EMAIL?: string; // login do painel (vars do wrangler.jsonc)
+  ADMIN_PASSWORD?: string; // senha do painel (segredo no Cloudflare)
 }
 
 const CONTENT_KEY = "content";
@@ -79,11 +80,17 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     const fails = Number((await env.CONTENT.get(failKey)) ?? 0);
     if (fails >= MAX_LOGIN_FAILS) return json({ error: "Muitas tentativas. Aguarde 15 minutos e tente de novo." }, 429);
 
-    const body = (await request.json().catch(() => null)) as { password?: unknown } | null;
+    const body = (await request.json().catch(() => null)) as { email?: unknown; password?: unknown } | null;
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body?.password === "string" ? body.password : "";
-    if (!(await sameText(password, env.ADMIN_PASSWORD))) {
+    // Confere os dois sempre, para o tempo de resposta não revelar qual deles está errado.
+    const [emailOk, passwordOk] = await Promise.all([
+      sameText(email, (env.ADMIN_EMAIL ?? "").trim().toLowerCase()),
+      sameText(password, env.ADMIN_PASSWORD),
+    ]);
+    if (!env.ADMIN_EMAIL || !emailOk || !passwordOk) {
       await env.CONTENT.put(failKey, String(fails + 1), { expirationTtl: LOCKOUT_SECONDS });
-      return json({ error: "Senha incorreta." }, 401);
+      return json({ error: "E-mail ou senha incorretos." }, 401);
     }
     await env.CONTENT.delete(failKey);
     return json({ ok: true }, 200, { "set-cookie": sessionCookie(await createSession(env), SESSION_SECONDS) });

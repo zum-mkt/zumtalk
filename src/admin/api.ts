@@ -21,7 +21,7 @@ const jsonInit = (method: string, body?: unknown): RequestInit => ({
 
 export const api = {
   session: () => call<{ authed: boolean; configured: boolean }>("/api/session"),
-  login: (password: string) => call<{ ok: true }>("/api/login", jsonInit("POST", { password })),
+  login: (email: string, password: string) => call<{ ok: true }>("/api/login", jsonInit("POST", { email, password })),
   logout: () => call<{ ok: true }>("/api/logout", jsonInit("POST")),
   getContent: () => call<{ content: unknown }>("/api/content"),
   saveContent: (content: unknown) => call<{ ok: true; savedAt: string }>("/api/content", jsonInit("PUT", content)),

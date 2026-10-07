@@ -18,6 +18,8 @@
     { "pattern": "zumtalk.com", "custom_domain": true },
     { "pattern": "www.zumtalk.com", "custom_domain": true }
   ],
-  // Conteúdo editado no painel /admin. A senha do painel fica no segredo ADMIN_PASSWORD.
+  // Login do painel /admin. A senha fica no segredo ADMIN_PASSWORD (npx wrangler secret put ADMIN_PASSWORD).
+  "vars": { "ADMIN_EMAIL": "zum@agenciazum.com.br" },
+  // Conteúdo e blog editados no painel /admin.
   "kv_namespaces": [{ "binding": "CONTENT", "id": "157539242c1a4e1abe4a1418527d4b46" }]
 }

@@ -40,6 +40,7 @@ function FullScreenLoader() {
 }
 
 function Login({ unconfigured, onLoggedIn }: { unconfigured: boolean; onLoggedIn: () => void }) {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -49,7 +50,7 @@ function Login({ unconfigured, onLoggedIn }: { unconfigured: boolean; onLoggedIn
     setBusy(true);
     setError(null);
     try {
-      await api.login(password);
+      await api.login(email, password);
       onLoggedIn();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível entrar.");
@@ -72,6 +73,21 @@ function Login({ unconfigured, onLoggedIn }: { unconfigured: boolean; onLoggedIn
         ) : (
           <form onSubmit={submit} className="space-y-4">
             <div>
+              <label htmlFor="email" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-mist-500">
+                E-mail
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoFocus
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-mist-200 px-3.5 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+            <div>
               <label htmlFor="password" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-mist-500">
                 Senha
               </label>
@@ -79,7 +95,6 @@ function Login({ unconfigured, onLoggedIn }: { unconfigured: boolean; onLoggedIn
                 id="password"
                 type="password"
                 required
-                autoFocus
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
